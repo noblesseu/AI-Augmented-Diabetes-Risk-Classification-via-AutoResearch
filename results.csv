@@ -1,0 +1,2 @@
+exp_id,timestamp,description,auc_roc,delta,runtime_sec,status
+1,2026-04-14 19:37:14,baseline: LogisticRegression + StandardScaler,0.820088,baseline,0.3,baseline
