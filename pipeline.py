@@ -3,6 +3,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler, PolynomialFeatures
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import FunctionTransformer
+from sklearn.ensemble import VotingClassifier
+from lightgbm import LGBMClassifier
 
 
 def add_interactions(X):
@@ -20,7 +22,7 @@ def run_pipeline():
     X_all = np.vstack([X_train, X_val])
     y_all = np.concatenate([y_train, y_val])
 
-    model = Pipeline([
+    lr_pipe = Pipeline([
         ("interactions", FunctionTransformer(add_interactions)),
         ("poly", PolynomialFeatures(degree=2, include_bias=False)),
         ("scaler", StandardScaler()),
@@ -32,6 +34,20 @@ def run_pipeline():
         ))
     ])
 
+    lgbm_pipe = Pipeline([
+        ("interactions", FunctionTransformer(add_interactions)),
+        ("classifier", LGBMClassifier(
+            n_estimators=100,
+            random_state=42,
+            verbosity=-1
+        ))
+    ])
+
+    model = VotingClassifier(
+        estimators=[("lr", lr_pipe), ("lgbm", lgbm_pipe)],
+        voting='soft'
+    )
+
     model.fit(X_all, y_all)
     return model
 
@@ -39,4 +55,4 @@ def run_pipeline():
 if __name__ == "__main__":
     model = run_pipeline()
     print("pipeline.py ran successfully.")
-    print(f"Model type: {type(model.named_steps['classifier']).__name__}")
+    print(f"Model type: {type(model).__name__}")
