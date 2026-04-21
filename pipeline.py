@@ -1,6 +1,6 @@
 import numpy as np
 from sklearn.linear_model import LogisticRegression
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, PolynomialFeatures
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import FunctionTransformer
 
@@ -17,6 +17,7 @@ def run_pipeline():
 
     model = Pipeline([
         ("interactions", FunctionTransformer(add_interactions)),
+        ("poly", PolynomialFeatures(degree=2, include_bias=False, interaction_only=True)),
         ("scaler", StandardScaler()),
         ("classifier", LogisticRegression(
             max_iter=1000,
