@@ -6,6 +6,7 @@ from sklearn.preprocessing import FunctionTransformer
 from sklearn.ensemble import VotingClassifier, GradientBoostingClassifier
 from lightgbm import LGBMClassifier
 from xgboost import XGBClassifier
+from catboost import CatBoostClassifier
 
 
 def add_interactions(X):
@@ -65,8 +66,20 @@ def run_pipeline():
         ))
     ])
 
+    cb_pipe = Pipeline([
+        ("interactions", FunctionTransformer(add_interactions)),
+        ("classifier", CatBoostClassifier(
+            iterations=300,
+            learning_rate=0.05,
+            depth=6,
+            random_seed=42,
+            verbose=0
+        ))
+    ])
+
     model = VotingClassifier(
-        estimators=[("lr", lr_pipe), ("lgbm", lgbm_pipe), ("gb", gb_pipe), ("xgb", xgb_pipe)],
+        estimators=[("lr", lr_pipe), ("lgbm", lgbm_pipe), ("gb", gb_pipe),
+                    ("xgb", xgb_pipe), ("cb", cb_pipe)],
         voting='soft'
     )
 
