@@ -5,6 +5,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import FunctionTransformer
 from sklearn.ensemble import VotingClassifier, GradientBoostingClassifier
 from lightgbm import LGBMClassifier
+from xgboost import XGBClassifier
 
 
 def add_interactions(X):
@@ -53,8 +54,19 @@ def run_pipeline():
         ))
     ])
 
+    xgb_pipe = Pipeline([
+        ("interactions", FunctionTransformer(add_interactions)),
+        ("classifier", XGBClassifier(
+            n_estimators=200,
+            learning_rate=0.05,
+            random_state=42,
+            eval_metric='logloss',
+            verbosity=0
+        ))
+    ])
+
     model = VotingClassifier(
-        estimators=[("lr", lr_pipe), ("lgbm", lgbm_pipe), ("gb", gb_pipe)],
+        estimators=[("lr", lr_pipe), ("lgbm", lgbm_pipe), ("gb", gb_pipe), ("xgb", xgb_pipe)],
         voting='soft'
     )
 
