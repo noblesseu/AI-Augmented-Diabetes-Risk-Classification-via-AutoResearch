@@ -71,7 +71,7 @@ def run_pipeline():
         ("classifier", CatBoostClassifier(
             iterations=500,
             learning_rate=0.03,
-            depth=6,
+            depth=8,
             auto_class_weights='Balanced',
             random_seed=42,
             verbose=0
