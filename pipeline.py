@@ -22,7 +22,7 @@ def run_pipeline():
 
     model = Pipeline([
         ("interactions", FunctionTransformer(add_interactions)),
-        ("poly", PolynomialFeatures(degree=2, include_bias=False, interaction_only=True)),
+        ("poly", PolynomialFeatures(degree=2, include_bias=False)),
         ("scaler", StandardScaler()),
         ("classifier", LogisticRegression(
             max_iter=1000,
