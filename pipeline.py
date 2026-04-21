@@ -69,9 +69,10 @@ def run_pipeline():
     cb_pipe = Pipeline([
         ("interactions", FunctionTransformer(add_interactions)),
         ("classifier", CatBoostClassifier(
-            iterations=300,
-            learning_rate=0.05,
+            iterations=500,
+            learning_rate=0.03,
             depth=6,
+            auto_class_weights='Balanced',
             random_seed=42,
             verbose=0
         ))
