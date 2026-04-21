@@ -37,7 +37,9 @@ def run_pipeline():
     lgbm_pipe = Pipeline([
         ("interactions", FunctionTransformer(add_interactions)),
         ("classifier", LGBMClassifier(
-            n_estimators=100,
+            n_estimators=300,
+            learning_rate=0.05,
+            num_leaves=63,
             random_state=42,
             verbosity=-1
         ))
