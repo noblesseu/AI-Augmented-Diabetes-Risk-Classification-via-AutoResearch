@@ -1,2 +1,4 @@
 exp_id,timestamp,description,auc_roc,delta,runtime_sec,status
-1,2026-04-14 19:37:14,baseline: LogisticRegression + StandardScaler,0.820088,baseline,0.3,baseline
+1,2026-04-14 19:37:14,baseline: LogisticRegression + StandardScaler,0.820088,baseline,0.3,keep
+2,2026-04-21 12:04:45,baseline: LogisticRegression + StandardScaler,0.820088,baseline,0.2,revert
+3,2026-04-21 12:05:15,class_weight=balanced in LogisticRegression,0.820650,+0.000562,0.2,keep

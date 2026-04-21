@@ -12,7 +12,8 @@ def run_pipeline():
         ("scaler", StandardScaler()),
         ("classifier", LogisticRegression(
             max_iter=1000,
-            random_state=42
+            random_state=42,
+            class_weight='balanced'
         ))
     ])
 
