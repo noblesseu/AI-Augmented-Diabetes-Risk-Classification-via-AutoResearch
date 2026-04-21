@@ -22,7 +22,8 @@ def run_pipeline():
         ("classifier", LogisticRegression(
             max_iter=1000,
             random_state=42,
-            class_weight='balanced'
+            class_weight='balanced',
+            C=0.1
         ))
     ])
 
