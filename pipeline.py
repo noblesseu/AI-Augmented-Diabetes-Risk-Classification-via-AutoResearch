@@ -60,6 +60,8 @@ def run_pipeline():
         ("classifier", XGBClassifier(
             n_estimators=200,
             learning_rate=0.05,
+            subsample=0.8,
+            colsample_bytree=0.8,
             random_state=42,
             eval_metric='logloss',
             verbosity=0
