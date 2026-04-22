@@ -16,13 +16,49 @@ An AI coding agent iteratively modifies a classification pipeline to maximize AU
 | Item | Value |
 |------|-------|
 | **Dataset** | CDC Diabetes Health Indicators (UCI ID 891) |
-| **Rows / Features** | 253,680 rows · 35 features |
+| **Rows / Features** | 253,680 rows · 21 features |
 | **Target** | Binary — diabetes/pre-diabetes (1) vs. healthy (0) |
 | **Metric** | AUC-ROC on locked test set |
-| **Baseline AUC-ROC** | TBD — run `python run.py "baseline"` |
-| **Best AUC-ROC** | TBD |
+| **Baseline AUC-ROC** | 0.8201 |
+| **Best AUC-ROC** | 0.8296 (exp 51) |
+| **Improvement** | +0.0095 over baseline |
+| **Total Experiments** | 54 |
 | **Experiment log** | [results.csv](results.csv) |
-| **Week** | 2 — Baseline & Evaluation Freeze |
+| **Status** | Complete |
+
+---
+
+## Best Pipeline
+
+A 5-way soft-voting ensemble trained on the combined train+val set, with manual interaction features injected before each sub-model:
+
+| Member | Config |
+|--------|--------|
+| **LogisticRegression** | degree-2 PolynomialFeatures, StandardScaler, C=0.1, class_weight='balanced' |
+| **LGBMClassifier** | n_estimators=300, lr=0.05, num_leaves=63 |
+| **GradientBoostingClassifier** | n_estimators=100 |
+| **XGBClassifier** | n_estimators=500, lr=0.03, subsample=0.8, colsample_bytree=0.8 |
+| **CatBoostClassifier** | iterations=500, lr=0.03, depth=8, auto_class_weights='Balanced' |
+
+Manual interaction features appended to every sub-model input: **BMI × Age** and **HighBP × HighChol**.
+
+---
+
+## Research Journey
+
+| Phase | Key Discovery | Best AUC |
+|-------|---------------|----------|
+| Baseline | LogisticRegression + StandardScaler | 0.8201 |
+| Class balancing | `class_weight='balanced'` | 0.8207 |
+| Feature engineering | BMI×Age, HighBP×HighChol interaction terms | 0.8219 |
+| Feature engineering | Degree-2 polynomial features (all pairs + squared) | 0.8281 |
+| Training strategy | Train on combined train+val | 0.8280 |
+| Model architecture | 2-way → 5-way soft VotingClassifier | 0.8294 |
+| Hyperparameter tuning | CatBoost depth=8, XGB stochastic subsample | 0.8296 |
+
+**Approaches that did not help:** SMOTE, random undersampling, ExtraTrees, HistGradientBoosting, stacking, SelectKBest feature selection, target encoding, RobustScaler/QuantileTransformer/SplineTransformer/Nystroem kernel approximation, LGBM dart boosting, optimal blend weights via Nelder-Mead, BMI clinical bins, additional interaction features (GenHlth×BMI, GenHlth×Age).
+
+See [failure_log.md](failure_log.md) for the full list of reverted experiments.
 
 ---
 
@@ -36,6 +72,7 @@ diabetes-autoresearch/
 ├── run.py              # FROZEN — orchestrates one experiment, logs result
 ├── program.md          # HUMAN EDITS — agent instruction file
 ├── results.csv         # AUTO-GENERATED — experiment log
+├── failure_log.md      # AUTO-GENERATED — reverted experiments
 ├── data/               # FROZEN after prepare.py runs
 │   ├── X_train.npy     # 60% of data — agent trains on this
 │   ├── y_train.npy
@@ -61,7 +98,7 @@ cd diabetes-autoresearch
 ### Step 2 — Install dependencies
 
 ```bash
-pip install ucimlrepo scikit-learn numpy
+pip install ucimlrepo scikit-learn numpy lightgbm xgboost catboost
 ```
 
 ### Step 3 — Prepare the data (run once)
@@ -92,50 +129,19 @@ Setup complete.
 python run.py "baseline: LogisticRegression + StandardScaler"
 ```
 
-Expected output:
+### Step 5 — Run the best pipeline
 
-```
-=======================================================
-  Experiment 001: baseline: LogisticRegression + StandardScaler
-=======================================================
-  Training model...
-  Training complete (~Xs)
-  Evaluating on locked test set...
-
-  AUC-ROC:     0.XXXXXX
-  Runtime:     X.Xs
-
-  >>> BASELINE ESTABLISHED
-=======================================================
-
-  Result logged to results.csv
+```bash
+python run.py "5-way ensemble XGB n_estimators=500 lr=0.03 more trees"
 ```
 
-### Step 5 — Verify the experiment log
+Expected AUC-ROC: **0.8296**
+
+### Step 6 — Verify the experiment log
 
 ```bash
 cat results.csv
 ```
-
-You should see one row with exp_id=1, the AUC-ROC score, and status=baseline.
-
----
-
-## The AutoResearch Loop (Week 3 onward)
-
-```bash
-# Launch Claude Code in the project directory
-claude
-
-# Then paste this prompt:
-# "Read program.md for your instructions, then read pipeline.py.
-#  Run python run.py "baseline" to confirm the baseline.
-#  Then enter the AutoResearch loop."
-```
-
-The agent will modify `pipeline.py`, run experiments, and log results
-to `results.csv` autonomously. The human monitors progress and can
-interrupt at any time.
 
 ---
 
@@ -154,9 +160,4 @@ interrupt at any time.
 
 ## Research Log
 
-See [research_log.md](research_log.md) for a dated record of decisions,
-observations, and next steps.
-
-## Failure Log
-
-See [failure_log.md](failure_log.md) for crashed experiments and lessons learned.
+See [failure_log.md](failure_log.md) for a complete record of all reverted experiments.

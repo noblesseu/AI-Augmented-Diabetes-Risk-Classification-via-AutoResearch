@@ -1,0 +1,37 @@
+# Failure Log
+
+- exp_04 | SMOTE oversampling with LogisticRegression | AUC=0.7791 | did not improve over 0.8207
+- exp_05 | random undersampling with LogisticRegression | AUC=0.8205 | did not improve over 0.8207
+- exp_08 | RandomForestClassifier n_estimators=100 with interaction features | AUC=0.7981 | did not improve over 0.8277
+- exp_09 | GradientBoostingClassifier n_estimators=100 with interaction features | AUC=0.8273 | did not improve over 0.8277
+- exp_10 | XGBClassifier n_estimators=100 with interaction features | AUC=0.8230 | did not improve over 0.8277
+- exp_11 | LGBMClassifier n_estimators=100 with interaction features | AUC=0.8275 | did not improve over 0.8278
+- exp_12 | LGBMClassifier n_estimators=300 lr=0.05 num_leaves=63 class_weight=balanced | AUC=0.8262 | did not improve over 0.8278
+- exp_14 | LR poly interaction_only C=0.05 stronger regularization | AUC=0.8278 | did not improve over 0.8278
+- exp_15 | MLPClassifier hidden=(64,32) early_stopping with interaction features | AUC=0.8263 | did not improve over 0.8278
+- exp_17 | LR poly C=0.2 balanced train+val combined | AUC=0.8280 | did not improve over 0.8280
+- exp_22 | 3-way ensemble GB tuned n_estimators=200 lr=0.05 max_depth=4 | AUC=0.8294 | did not improve over 0.8294
+- exp_24 | StackingClassifier LGBM+GB+XGB base LR meta passthrough cv=5 train+val | AUC=0.8253 | did not improve over 0.8294
+- exp_25 | 5-way ensemble +HistGradientBoosting max_iter=200 lr=0.05 train+val | AUC=0.8293 | did not improve over 0.8294
+- exp_26 | 4-way ensemble XGB scale_pos_weight=6 for class imbalance train+val | AUC=0.8293 | did not improve over 0.8294
+- exp_27 | 4-way ensemble RobustScaler in LR-poly instead of StandardScaler train+val | AUC=0.8292 | did not improve over 0.8294
+- exp_28 | 5-way ensemble +LGBM-balanced is_unbalance=True as 5th member train+val | AUC=0.8291 | did not improve over 0.8294
+- exp_29 | baseline: LogisticRegression + StandardScaler (rerun) | AUC=0.8201 | did not improve over 0.8294
+- exp_30 | 4-way ensemble LR-poly SelectKBest f_classif top-150 features | AUC=0.8287 | did not improve over 0.8294
+- exp_31 | 4-way ensemble + smoothed target encoding GenHlth Age Education Income | AUC=0.8293 | did not improve over 0.8294
+- exp_32 | weighted VotingClassifier LR-weight=2 LGBM-GB-XGB-weight=1 train+val | AUC=0.8294 | did not improve over 0.8294
+- exp_33 | 4-way ensemble LR-poly L1 lasso liblinear C=0.1 train+val | AUC=0.8294 | did not improve over 0.8294 (also 286s — over 3-min budget)
+- exp_36 | baseline rerun confirmation | AUC=0.8201 | did not improve over 0.8295
+- exp_39 | 5-way ensemble LGBM subsample=0.8 colsample_bytree=0.8 stochastic | AUC=0.8295 | did not improve over 0.8296
+- exp_41 | 5-way ensemble +GenHlth*BMI GenHlth*Age BMI*HighBP interactions | AUC=0.8294 | did not improve over 0.8296
+- exp_42 | 5-way ensemble replace GB with ExtraTreesClassifier n=200 | AUC=0.8281 | did not improve over 0.8296
+- exp_43 | 5-way ensemble LGBM early-stop on val best_n then retrain on all | AUC=0.8295 | did not improve over 0.8296
+- exp_44 | baseline rerun confirmation | AUC=0.8201 | did not improve over 0.8296
+- exp_45 | 5-way ensemble + BMI clinical threshold bins (6 one-hot cols) | AUC=0.8294 | did not improve over 0.8296
+- exp_46 | 5-way ensemble LR-poly QuantileTransformer normal instead of StandardScaler | AUC=0.8292 | did not improve over 0.8296 (also 111s, slow)
+- exp_47 | 5-way ensemble LR SplineTransformer degree=3 n_knots=5 instead of poly | AUC=0.8290 | did not improve over 0.8296
+- exp_48 | optimal blend weights Nelder-Mead AUC on val set retrain on all | AUC=0.8295 | did not improve over 0.8296
+- exp_49 | 5-way ensemble LR Nystroem RBF n_components=300 instead of poly | AUC=0.8294 | did not improve over 0.8296
+- exp_50 | 5-way ensemble LGBM dart boosting drop_rate=0.1 | AUC=0.8295 | did not improve over 0.8296
+- exp_52 | 5-way ensemble CatBoost iter=1000 lr=0.01 depth=8 balanced | AUC=0.8295 | did not improve over 0.8296
+- exp_53 | 5-way ensemble LGBM num_leaves=127 more complex trees | AUC=0.8295 | did not improve over 0.8296

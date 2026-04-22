@@ -2,3 +2,54 @@ exp_id,timestamp,description,auc_roc,delta,runtime_sec,status
 1,2026-04-14 19:37:14,baseline: LogisticRegression + StandardScaler,0.820088,baseline,0.3,keep
 2,2026-04-21 12:04:45,baseline: LogisticRegression + StandardScaler,0.820088,baseline,0.2,revert
 3,2026-04-21 12:05:15,class_weight=balanced in LogisticRegression,0.820650,+0.000562,0.2,keep
+4,2026-04-21 12:07:25,SMOTE oversampling with LogisticRegression,0.779086,-0.041564,6.7,revert
+5,2026-04-21 12:07:47,random undersampling with LogisticRegression,0.820493,-0.000157,0.1,revert
+6,2026-04-21 12:47:53,interaction terms: BMI*Age and HighBP*HighChol,0.821922,+0.001272,0.3,keep
+7,2026-04-21 12:49:06,polynomial features degree=2 interaction_only on top of manual interactions,0.827713,+0.005791,15.2,keep
+8,2026-04-21 12:49:32,RandomForestClassifier n_estimators=100 with interaction features,0.798123,-0.029590,2.2,revert
+9,2026-04-21 12:50:14,GradientBoostingClassifier n_estimators=100 with interaction features,0.827298,-0.000415,11.6,revert
+10,2026-04-21 12:51:51,XGBClassifier n_estimators=100 with interaction features,0.822956,-0.004757,0.4,revert
+11,2026-04-21 12:53:50,LGBMClassifier n_estimators=100 with interaction features,0.827490,-0.000223,0.7,revert
+12,2026-04-21 12:54:43,LGBMClassifier n_estimators=300 lr=0.05 num_leaves=63 class_weight=balanced,0.826188,-0.001525,2.6,revert
+13,2026-04-21 12:55:23,LR poly interaction_only C=0.1 stronger regularization,0.827784,+0.000071,12.2,keep
+14,2026-04-21 12:56:06,LR poly interaction_only C=0.05 stronger regularization,0.827754,-0.000030,11.0,revert
+15,2026-04-21 12:56:42,"MLPClassifier hidden=(64,32) early_stopping with interaction features",0.826293,-0.001491,9.9,revert
+16,2026-04-21 12:57:43,LR poly C=0.1 balanced trained on train+val combined,0.827999,+0.000215,17.1,keep
+17,2026-04-21 12:58:20,LR poly C=0.2 balanced train+val combined,0.827992,-0.000007,17.4,revert
+18,2026-04-21 12:59:05,LR poly degree=2 full (with squared) C=0.1 balanced train+val,0.828102,+0.000103,17.9,keep
+19,2026-04-21 12:59:52,VotingClassifier soft ensemble LR-poly + LGBM train+val,0.829014,+0.000912,19.0,keep
+20,2026-04-21 13:01:03,VotingClassifier 3-way soft LR-poly+LGBM+GradientBoosting train+val,0.829172,+0.000158,37.6,keep
+21,2026-04-21 13:02:18,3-way ensemble LGBM tuned n_estimators=300 lr=0.05 num_leaves=63,0.829385,+0.000213,37.9,keep
+22,2026-04-21 13:03:50,3-way ensemble GB tuned n_estimators=200 lr=0.05 max_depth=4,0.829366,-0.000019,65.3,revert
+23,2026-04-21 13:05:14,4-way ensemble LR-poly+LGBM-tuned+GB+XGB train+val,0.829426,+0.000041,39.1,keep
+24,2026-04-21 13:08:17,StackingClassifier LGBM+GB+XGB base LR meta passthrough cv=5 train+val,0.825297,-0.004129,111.2,revert
+25,2026-04-21 13:09:46,5-way ensemble +HistGradientBoosting max_iter=200 lr=0.05 train+val,0.829341,-0.000085,43.9,revert
+26,2026-04-21 13:11:52,4-way ensemble XGB scale_pos_weight=6 for class imbalance train+val,0.829271,-0.000155,39.0,revert
+27,2026-04-21 13:14:02,4-way ensemble RobustScaler in LR-poly instead of StandardScaler train+val,0.829233,-0.000193,89.6,revert
+28,2026-04-21 13:16:04,5-way ensemble +LGBM-balanced is_unbalance=True as 5th member train+val,0.829129,-0.000297,45.4,revert
+29,2026-04-21 13:25:17,baseline: LogisticRegression + StandardScaler,0.820088,-0.009338,0.2,revert
+30,2026-04-21 13:27:54,4-way ensemble LR-poly SelectKBest f_classif top-150 features,0.828745,-0.000681,32.0,revert
+31,2026-04-21 13:29:50,4-way ensemble + smoothed target encoding of GenHlth Age Education Income,0.829334,-0.000092,55.4,revert
+32,2026-04-21 13:31:17,weighted VotingClassifier LR-weight=2 LGBM-GB-XGB-weight=1 train+val,0.829395,-0.000031,39.5,revert
+33,2026-04-21 13:38:12,4-way ensemble LR-poly L1 lasso liblinear C=0.1 train+val,0.829413,-0.000013,286.4,revert
+34,2026-04-21 13:44:15,4-way ensemble LR-poly L1 lasso liblinear C=0.1 train+val,0.829413,-0.000013,282.5,revert
+35,2026-04-21 13:53:38,5-way ensemble +CatBoost iterations=300 lr=0.05 depth=6 train+val,0.829490,+0.000064,45.0,keep
+36,2026-04-21 13:58:18,baseline: LogisticRegression + StandardScaler,0.820088,-0.009402,0.2,revert
+37,2026-04-21 14:17:04,5-way ensemble CatBoost iter=500 lr=0.03 auto_class_weights=Balanced,0.829551,+0.000061,50.8,keep
+38,2026-04-21 14:18:25,5-way ensemble CatBoost depth=8 iter=500 lr=0.03 balanced,0.829585,+0.000034,49.6,keep
+39,2026-04-21 14:19:36,5-way ensemble LGBM subsample=0.8 colsample_bytree=0.8 stochastic,0.829547,-0.000038,49.6,revert
+40,2026-04-21 14:21:30,5-way ensemble XGB subsample=0.8 colsample_bytree=0.8 stochastic,0.829607,+0.000022,51.1,keep
+41,2026-04-21 14:22:57,5-way ensemble +3 GenHlth interactions: GenHlth*BMI GenHlth*Age BMI*HighBP,0.829384,-0.000223,63.5,revert
+42,2026-04-21 14:26:05,5-way ensemble replace GB with ExtraTreesClassifier n=200,0.828054,-0.001553,39.3,revert
+43,2026-04-21 15:36:19,5-way ensemble LGBM early-stop on val to find best_n then retrain on all,0.829538,-0.000069,50.0,revert
+44,2026-04-22 12:09:43,baseline: LogisticRegression + StandardScaler,0.820088,-0.009519,0.2,revert
+45,2026-04-22 12:34:24,5-way ensemble + BMI clinical threshold bins (6 one-hot cols),0.829400,-0.000207,59.7,revert
+46,2026-04-22 12:37:18,5-way ensemble LR-poly QuantileTransformer normal instead of StandardScaler,0.829191,-0.000416,113.2,revert
+47,2026-04-22 12:56:25,5-way ensemble LR SplineTransformer degree=3 n_knots=5 instead of poly,0.829009,-0.000598,37.0,revert
+48,2026-04-22 13:13:05,optimal blend weights via Nelder-Mead AUC on val set then retrain on all,0.829524,-0.000083,90.8,revert
+49,2026-04-22 13:22:31,5-way ensemble LR Nystroem RBF n_components=300 instead of poly,0.829355,-0.000252,38.0,revert
+50,2026-04-22 14:29:22,5-way ensemble LGBM dart boosting drop_rate=0.1,0.829505,-0.000102,67.6,revert
+51,2026-04-22 14:33:11,5-way ensemble XGB n_estimators=500 lr=0.03 more trees,0.829611,+0.000004,51.4,keep
+52,2026-04-22 14:34:41,5-way ensemble CatBoost iter=1000 lr=0.01 depth=8 balanced,0.829527,-0.000084,61.6,revert
+53,2026-04-22 14:36:02,5-way ensemble LGBM num_leaves=127 more complex trees,0.829534,-0.000077,52.8,revert
+54,2026-04-22 14:38:14,5-way ensemble GB n_estimators=300 max_depth=4 lr=0.05 tuned,0.829597,-0.000014,102.4,revert
