@@ -58,8 +58,8 @@ def run_pipeline():
     xgb_pipe = Pipeline([
         ("interactions", FunctionTransformer(add_interactions)),
         ("classifier", XGBClassifier(
-            n_estimators=200,
-            learning_rate=0.05,
+            n_estimators=500,
+            learning_rate=0.03,
             subsample=0.8,
             colsample_bytree=0.8,
             random_state=42,
