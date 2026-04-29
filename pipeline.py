@@ -4,6 +4,7 @@ from sklearn.preprocessing import StandardScaler, PolynomialFeatures
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import FunctionTransformer
 from sklearn.ensemble import VotingClassifier, GradientBoostingClassifier
+from sklearn.feature_selection import VarianceThreshold
 from lightgbm import LGBMClassifier
 from xgboost import XGBClassifier
 from catboost import CatBoostClassifier
@@ -27,6 +28,7 @@ def run_pipeline():
     lr_pipe = Pipeline([
         ("interactions", FunctionTransformer(add_interactions)),
         ("poly", PolynomialFeatures(degree=2, include_bias=False)),
+        ("vt", VarianceThreshold(threshold=0.01)),
         ("scaler", StandardScaler()),
         ("classifier", LogisticRegression(
             max_iter=1000,
