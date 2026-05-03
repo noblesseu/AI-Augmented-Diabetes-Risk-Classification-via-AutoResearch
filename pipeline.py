@@ -5,6 +5,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import FunctionTransformer
 from sklearn.ensemble import VotingClassifier, GradientBoostingClassifier
 from sklearn.feature_selection import VarianceThreshold
+from sklearn.metrics import roc_auc_score
 from lightgbm import LGBMClassifier
 from xgboost import XGBClassifier
 from catboost import CatBoostClassifier
@@ -16,15 +17,7 @@ def add_interactions(X):
     return np.hstack([X, bmi_x_age, highbp_x_highchol])
 
 
-def run_pipeline():
-    X_train = np.load("data/X_train.npy")
-    y_train = np.load("data/y_train.npy")
-    X_val = np.load("data/X_val.npy")
-    y_val = np.load("data/y_val.npy")
-
-    X_all = np.vstack([X_train, X_val])
-    y_all = np.concatenate([y_train, y_val])
-
+def _build_ensemble():
     lr_pipe = Pipeline([
         ("interactions", FunctionTransformer(add_interactions)),
         ("poly", PolynomialFeatures(degree=2, include_bias=False)),
@@ -82,14 +75,35 @@ def run_pipeline():
         ))
     ])
 
-    model = VotingClassifier(
+    return VotingClassifier(
         estimators=[("lr", lr_pipe), ("lgbm", lgbm_pipe), ("gb", gb_pipe),
                     ("xgb", xgb_pipe), ("cb", cb_pipe)],
         voting='soft'
     )
 
-    model.fit(X_all, y_all)
-    return model
+
+def run_pipeline():
+    X_train = np.load("data/X_train.npy")
+    y_train = np.load("data/y_train.npy")
+    X_val = np.load("data/X_val.npy")
+    y_val = np.load("data/y_val.npy")
+
+    # --- Step 1: train on X_train only, evaluate on X_val ---
+    # This is the score to use for keep/revert decisions.
+    # The test set must NOT be used for model selection.
+    val_model = _build_ensemble()
+    val_model.fit(X_train, y_train)
+    val_auc = roc_auc_score(y_val, val_model.predict_proba(X_val)[:, 1])
+    print(f"  *** VAL AUC (use this for model selection): {val_auc:.6f} ***")
+
+    # --- Step 2: retrain on full train+val for final submission ---
+    # Test AUC (reported by evaluate.py) should only be checked
+    # once on the final chosen model, not used for selection.
+    X_all = np.vstack([X_train, X_val])
+    y_all = np.concatenate([y_train, y_val])
+    final_model = _build_ensemble()
+    final_model.fit(X_all, y_all)
+    return final_model
 
 
 if __name__ == "__main__":
