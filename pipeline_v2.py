@@ -43,7 +43,7 @@ def _build_ensemble():
     gb_pipe = Pipeline([
         ("interactions", FunctionTransformer(add_interactions)),
         ("classifier", HistGradientBoostingClassifier(
-            max_iter=200, learning_rate=0.05, random_state=42
+            max_iter=400, learning_rate=0.03, random_state=42
         ))
     ])
     xgb_pipe = Pipeline([
