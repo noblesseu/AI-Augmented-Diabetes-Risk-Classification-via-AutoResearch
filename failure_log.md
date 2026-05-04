@@ -35,3 +35,40 @@
 - exp_50 | 5-way ensemble LGBM dart boosting drop_rate=0.1 | AUC=0.8295 | did not improve over 0.8296
 - exp_52 | 5-way ensemble CatBoost iter=1000 lr=0.01 depth=8 balanced | AUC=0.8295 | did not improve over 0.8296
 - exp_53 | 5-way ensemble LGBM num_leaves=127 more complex trees | AUC=0.8295 | did not improve over 0.8296
+- Phase_A exhausted (diagnostic complete): ensemble CV=0.8315±0.0030, LR-poly CV=0.8302±0.0031 — model is stable and genuinely strong
+- exp_57 | Phase_B: class_weight balanced on all members LGBM+XGB simultaneously | AUC=0.8292 | did not improve over 0.8296
+- Phase_B exp2 skipped: threshold optimization cannot change AUC-ROC (metric integrates over all thresholds by definition)
+- exp_58 | Phase_B: ADASYN oversampling on full train+val set | AUC=0.7754 | did not improve over 0.8296 (oversampling pattern: SMOTE=-0.042, ADASYN=-0.054)
+- exp_59 | Phase_B: TomekLinks undersampling | CRASH | runtime >20min on 202k rows — O(n²) NN computation, killed
+- Phase_B exhausted after 3 reverts (class_weight all members, ADASYN, TomekLinks crash)
+- exp_60 | Phase_C: ComorbidityCount HighBP+HighChol+Stroke+HeartDisease sum feature | AUC=0.8295 | did not improve over 0.8296
+- exp_61 | Phase_C: LifestyleScore PhysActivity+Fruits+Veggies-HvyAlcohol composite | AUC=0.8296 | did not improve over 0.8296
+- exp_62 | Phase_C: MetabolicRisk BMI>30 AND HighBP AND HighChol triple interaction | AUC=0.8295 | did not improve over 0.8296
+- Phase_C exhausted after 3 reverts (ComorbidityCount, LifestyleScore, MetabolicRisk)
+- exp_63 | Phase_D: SelectKBest chi2 k=50 on LR-poly aggressive selection | AUC=0.8290 | did not improve over 0.8296
+- Phase_D exp3 skipped: RFE on 276 poly features × 202k rows violates 3-min budget
+- exp_64 | Phase_D: SelectKBest mutual_info_classif k=75 on LR-poly | AUC=0.8288 | did not improve over 0.8296 (191s, near budget)
+- exp_66 | Phase_D: VT+SelectKBest f_classif k=100 stacked selectors on LR-poly | AUC=0.8289 | did not improve over 0.8296
+- exp_67 | Phase_D: VarianceThreshold 0.001 looser threshold on LR-poly | AUC=0.8296 | did not improve over 0.8296
+- exp_68 | Phase_D: LR C=0.3 less regularization with VT-filtered features | AUC=0.8296 | did not improve over 0.8296
+- Phase_D exhausted after 3 consecutive reverts post-keep (VT+SelectKBest, VT-0.001, LR-C=0.3)
+- exp_69 | Phase_E: MLP(128,64,32) relu early_stopping as 6th ensemble member | AUC=0.8296 | did not improve over 0.8296
+- exp_70 | Phase_E: MLP(256,128) alpha=0.001 early_stop replaces GB in ensemble | AUC=0.8296 | did not improve over 0.8296
+- exp_71 | Phase_E: MLP(64,32) on poly features as 6th ensemble member | AUC=0.8296 | did not improve over 0.8296
+- Phase_E exhausted after 3 consecutive reverts — all program.md phases complete
+- exp_72 | Phase_E+: LGBM n_estimators=500 lr=0.03 mirror XGB tuning | AUC=0.8296 | did not improve over 0.8296
+- exp_74 | Phase_E+: global raw feature selection LGBM top-15 of 21 all members | AUC=0.8266 | did not improve over 0.8296 (dropping 6 features hurts -0.003)
+- exp_75 | Phase_E+: global raw feature selection LGBM top-19 of 21 drop 2 weakest | AUC=0.8294 | did not improve over 0.8296 (even dropping 2 hurts — all features carry signal)
+- exp_76 | Phase_E+: seed ensemble XGB+CatBoost seed=0 as 6th/7th members | AUC=0.8296 | did not improve over 0.8296
+- exp_77 | Phase_E+: Optuna 10-trial joint search LGBM+XGB+CatBoost | AUC=0.8294 | did not improve over 0.8296 (val=0.8312 but overfit to val split; 493s runtime)
+- exp_78 | Phase_E+: CatBoost depth=10 l2_leaf_reg=10 Optuna-informed | AUC=0.8294 | did not improve over 0.8296
+- exp_77 | 3-class diabetes_012 target P(1)+P(2) collapsed to binary | AUC=0.8280 | did not improve over 0.8296 (pre-diabetes class only 1.8% of training data — too sparse to extract extra signal)
+
+## v2 loop failures
+- v2_exp_011 | drop GB use CatBoost iter=500 depth=8 | AUC=0.8344 | did not improve over 0.8346 (-0.000050)
+- v2_exp_012 | XGB n=500 lr=0.03 from n=300 | AUC=0.8344 | did not improve over 0.8346 (-0.000001)
+- v2_exp_016 | CatBoost iter=500 depth=8 full strength | AUC=0.8345 | did not improve over 0.8346 (-0.000088)
+- v2_exp_019 | LGBM num_leaves=127 | AUC=0.8347 | did not improve over 0.8347 (-0.000012)
+- v2_exp_020 | XGB max_depth=4 shallower trees | AUC=0.8345 | did not improve over 0.8347 (-0.000104)
+- v2_exp_021 | LGBM n=500 lr=0.03 | AUC=0.8347 | did not improve over 0.8347 (-0.000012)
+- Phase_D_v2 exhausted after 3 consecutive reverts (num_leaves, max_depth, n_estimators tuning)

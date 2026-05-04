@@ -2,3 +2,23 @@ exp_id,timestamp,description,auc_roc,delta,runtime_sec,status
 2,2026-05-03 18:07:29,baseline: LogisticRegression 37 expanded features,0.821531,baseline,0.7,baseline
 3,2026-05-03 19:56:59,Phase_A: 5-fold CV on baseline LR 38 features stability check,0.821566,baseline,5.9,baseline
 4,2026-05-03 20:02:12,Phase_A: 5-fold CV on LR-poly interaction_only degree=2 stability comparison,0.828085,+0.006554,272.6,keep
+5,2026-05-03 20:06:20,Phase_B: class_weight=balanced on LR-poly interaction_only,0.828265,+0.000180,78.2,keep
+6,2026-05-03 20:09:14,Phase_C: add BMI*Age BPHIGH4*TOLDHI2 interaction features to LR-poly,0.829200,+0.000935,88.0,keep
+7,2026-05-03 20:11:36,Phase_C: 2-way soft ensemble LR-poly + LGBM,0.832758,+0.003558,83.2,keep
+8,2026-05-03 20:15:40,Phase_C: 3-way ensemble LR-poly + LGBM + GradientBoosting,0.833267,+0.000509,194.8,keep
+9,2026-05-03 20:20:21,Phase_C: 4-way ensemble +XGB n=300 stochastic subsample,0.833944,+0.000677,195.0,keep
+10,2026-05-03 20:25:43,Phase_C: 5-way ensemble +CatBoost iter=200 lr=0.1 depth=6 light,0.834410,+0.000466,176.8,keep
+11,2026-05-03 20:29:17,Phase_C: drop GB replace with CatBoost iter=500 lr=0.03 depth=8 stronger,0.834360,-0.000050,103.0,revert
+12,2026-05-03 20:33:29,Phase_C: XGB n=500 lr=0.03 stochastic tuned from n=300,0.834409,-0.000001,198.5,revert
+13,2026-05-03 20:37:52,Phase_D: VarianceThreshold 0.01 on LR-poly to remove near-zero-variance features,0.834410,+0.000000,190.7,keep
+14,2026-05-03 20:42:08,Phase_D: LGBM stochastic subsample=0.8 colsample=0.8 regularization,0.834455,+0.000045,207.0,keep
+15,2026-05-03 20:45:27,Phase_D: replace GB with HistGradientBoosting max_iter=200 faster on large data,0.834611,+0.000156,109.4,keep
+16,2026-05-03 20:56:34,Phase_D: CatBoost iter=500 lr=0.03 depth=8 full strength from light iter=200,0.834523,-0.000088,115.9,revert
+17,2026-05-03 20:59:31,Phase_D: HistGBM max_iter=400 lr=0.03 more trees slower learning rate,0.834652,+0.000041,113.2,keep
+18,2026-05-03 21:02:17,Phase_C: add GENHLTH*Age as 3rd manual interaction feature,0.834663,+0.000011,122.0,keep
+19,2026-05-03 21:06:06,Phase_D: LGBM num_leaves=127 more complex trees 38 features larger dataset,0.834651,-0.000012,124.6,revert
+20,2026-05-03 21:09:34,Phase_D: XGB max_depth=4 shallower more regularized trees for diversity,0.834559,-0.000104,121.9,revert
+21,2026-05-03 21:14:45,Phase_D: LGBM n=500 lr=0.03 more trees slower learning rate mirror XGB,0.834651,-0.000012,124.2,revert
+22,2026-05-03 21:19:18,"Phase_E: MLP(128,64,32) relu early_stopping as 6th ensemble member",0.834710,+0.000047,187.1,keep
+23,2026-05-03 21:23:33,"Phase_E: MLP(256,128) alpha=0.001 larger architecture with regularization",0.834753,+0.000043,214.5,keep
+24,2026-05-03 21:29:44,"Phase_E: MLP(256,128) tanh activation instead of relu different nonlinearity",0.834686,-0.000067,215.5,revert

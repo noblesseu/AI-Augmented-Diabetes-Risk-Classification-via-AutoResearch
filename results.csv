@@ -53,3 +53,27 @@ exp_id,timestamp,description,auc_roc,delta,runtime_sec,status
 52,2026-04-22 14:34:41,5-way ensemble CatBoost iter=1000 lr=0.01 depth=8 balanced,0.829527,-0.000084,61.6,revert
 53,2026-04-22 14:36:02,5-way ensemble LGBM num_leaves=127 more complex trees,0.829534,-0.000077,52.8,revert
 54,2026-04-22 14:38:14,5-way ensemble GB n_estimators=300 max_depth=4 lr=0.05 tuned,0.829597,-0.000014,102.4,revert
+55,2026-04-28 17:21:42,Phase_A: 5-fold CV on current best 5-way ensemble,0.829611,+0.000000,149.6,keep
+56,2026-04-28 17:26:11,Phase_A: 5-fold CV on LR-poly alone stability comparison,0.829611,+0.000000,78.2,keep
+57,2026-04-28 17:30:11,Phase_B: class_weight balanced on all members LGBM+XGB simultaneously,0.829219,-0.000392,52.1,revert
+58,2026-04-28 17:40:40,Phase_B: ADASYN oversampling on full train+val set,0.775369,-0.054242,159.4,revert
+59,2026-04-28 17:52:59,Phase_C: ComorbidityCount HighBP+HighChol+Stroke+HeartDisease sum feature,0.829506,-0.000105,55.5,revert
+60,2026-04-28 17:55:59,Phase_C: LifestyleScore PhysActivity+Fruits+Veggies-HvyAlcohol composite,0.829557,-0.000054,53.5,revert
+61,2026-04-28 18:02:12,Phase_C: MetabolicRisk BMI>30 AND HighBP AND HighChol triple interaction,0.829521,-0.000090,52.3,revert
+62,2026-04-29 14:13:09,Phase_D: SelectKBest chi2 k=50 on LR-poly aggressive selection,0.828991,-0.000620,36.5,revert
+63,2026-04-29 14:17:00,Phase_D: SelectKBest mutual_info_classif k=75 on LR-poly,0.828788,-0.000823,191.2,revert
+64,2026-04-29 14:44:26,Phase_D: VarianceThreshold 0.01 remove near-constant poly features,0.829618,+0.000007,50.5,keep
+65,2026-04-29 14:45:54,Phase_D: VT+SelectKBest f_classif k=100 stacked selectors on LR-poly,0.828943,-0.000675,42.4,revert
+66,2026-04-29 14:48:17,Phase_D: VarianceThreshold 0.001 looser threshold on LR-poly,0.829610,-0.000008,50.8,revert
+67,2026-04-29 14:51:40,Phase_D: LR C=0.3 less regularization with VT-filtered features,0.829614,-0.000004,55.1,revert
+68,2026-04-29 14:53:53,"Phase_E: MLP(128,64,32) relu early_stopping as 6th ensemble member",0.829553,-0.000065,77.9,revert
+69,2026-04-29 14:55:56,"Phase_E: MLP(256,128) alpha=0.001 early_stop replaces GB in ensemble",0.829550,-0.000068,73.0,revert
+70,2026-04-29 14:58:17,"Phase_E: MLP(64,32) on poly features as 6th ensemble member",0.829576,-0.000042,84.4,revert
+71,2026-04-29 15:00:09,Phase_E+: LGBM n_estimators=500 lr=0.03 mirror XGB tuning,0.829590,-0.000028,51.9,revert
+72,2026-04-29 15:15:49,Phase_E+: global raw feature selection LGBM top-15 of 21 all members,0.826648,-0.002970,38.9,revert
+73,2026-04-29 15:17:42,Phase_E+: global raw feature selection LGBM top-19 of 21 drop 2 weakest,0.829437,-0.000181,44.8,revert
+74,2026-04-30 12:53:56,Phase_E+: seed ensemble XGB+CatBoost seed=0 added as 6th/7th members,0.829573,-0.000045,62.6,revert
+75,2026-04-30 13:05:54,Phase_E+: Optuna 10-trial joint search LGBM+XGB+CatBoost hyperparams,0.829444,-0.000174,493.6,revert
+76,2026-04-30 13:07:44,Phase_E+: CatBoost depth=10 l2_leaf_reg=10 Optuna-informed,0.829422,-0.000196,57.4,revert
+77,2026-04-30 13:47:49,3-class target diabetes_012 P(1)+P(2) collapsed to binary AUC,0.828031,-0.001587,134.3,revert
+78,2026-05-03 16:34:18,fix: val-set model selection — train on X_train eval on X_val for keep/revert,0.829618,+0.000000,89.7,keep

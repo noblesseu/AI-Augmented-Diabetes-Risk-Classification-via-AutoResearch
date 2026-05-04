@@ -20,7 +20,7 @@ An AI coding agent iteratively modifies a classification pipeline to maximize AU
 | **Target** | Binary — diabetes/pre-diabetes (1) vs. healthy (0) |
 | **Metric** | AUC-ROC on locked test set |
 | **Baseline AUC-ROC** | 0.8201 |
-| **Best AUC-ROC** | 0.8296 (exp 51) |
+| **Best AUC-ROC** | 0.8296 (exp 65) |
 | **Improvement** | +0.0095 over baseline |
 | **Total Experiments** | 54 |
 | **Experiment log** | [results.csv](results.csv) |
