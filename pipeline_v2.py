@@ -12,6 +12,7 @@ from sklearn.ensemble import VotingClassifier, GradientBoostingClassifier
 from sklearn.metrics import roc_auc_score
 from lightgbm import LGBMClassifier
 from xgboost import XGBClassifier
+from catboost import CatBoostClassifier
 
 # v2 feature indices: 8=BPHIGH4, 11=TOLDHI2, 32=_BMI5, 37=_AGEG5YR
 def add_interactions(X):
@@ -50,9 +51,16 @@ def _build_ensemble():
             random_state=42, eval_metric='logloss', verbosity=0
         ))
     ])
+    cb_pipe = Pipeline([
+        ("interactions", FunctionTransformer(add_interactions)),
+        ("classifier", CatBoostClassifier(
+            iterations=200, learning_rate=0.1, depth=6,
+            auto_class_weights='Balanced', random_seed=42, verbose=0
+        ))
+    ])
     return VotingClassifier(
         estimators=[("lr", lr_pipe), ("lgbm", lgbm_pipe),
-                    ("gb", gb_pipe), ("xgb", xgb_pipe)],
+                    ("gb", gb_pipe), ("xgb", xgb_pipe), ("cb", cb_pipe)],
         voting='soft'
     )
 
