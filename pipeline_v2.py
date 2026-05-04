@@ -9,6 +9,7 @@ from sklearn.preprocessing import StandardScaler, PolynomialFeatures
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import FunctionTransformer
 from sklearn.ensemble import VotingClassifier, GradientBoostingClassifier
+from sklearn.feature_selection import VarianceThreshold
 from sklearn.metrics import roc_auc_score
 from lightgbm import LGBMClassifier
 from xgboost import XGBClassifier
@@ -26,6 +27,7 @@ def _build_ensemble():
         ("interactions", FunctionTransformer(add_interactions)),
         ("scaler", StandardScaler()),
         ("poly", PolynomialFeatures(degree=2, interaction_only=True, include_bias=False)),
+        ("vt", VarianceThreshold(threshold=0.01)),
         ("classifier", LogisticRegression(
             max_iter=1000, random_state=42, class_weight='balanced', C=0.1
         ))
