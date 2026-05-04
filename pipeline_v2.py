@@ -67,8 +67,8 @@ def _build_ensemble():
         ("interactions", FunctionTransformer(add_interactions)),
         ("scaler", StandardScaler()),
         ("classifier", MLPClassifier(
-            hidden_layer_sizes=(128, 64, 32), activation='relu',
-            max_iter=500, early_stopping=True, random_state=42
+            hidden_layer_sizes=(256, 128), activation='relu',
+            alpha=0.001, max_iter=500, early_stopping=True, random_state=42
         ))
     ])
     return VotingClassifier(
