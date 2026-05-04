@@ -11,6 +11,7 @@ from sklearn.preprocessing import FunctionTransformer
 from sklearn.ensemble import VotingClassifier, GradientBoostingClassifier
 from sklearn.metrics import roc_auc_score
 from lightgbm import LGBMClassifier
+from xgboost import XGBClassifier
 
 # v2 feature indices: 8=BPHIGH4, 11=TOLDHI2, 32=_BMI5, 37=_AGEG5YR
 def add_interactions(X):
@@ -41,8 +42,17 @@ def _build_ensemble():
             n_estimators=100, random_state=42
         ))
     ])
+    xgb_pipe = Pipeline([
+        ("interactions", FunctionTransformer(add_interactions)),
+        ("classifier", XGBClassifier(
+            n_estimators=300, learning_rate=0.05,
+            subsample=0.8, colsample_bytree=0.8,
+            random_state=42, eval_metric='logloss', verbosity=0
+        ))
+    ])
     return VotingClassifier(
-        estimators=[("lr", lr_pipe), ("lgbm", lgbm_pipe), ("gb", gb_pipe)],
+        estimators=[("lr", lr_pipe), ("lgbm", lgbm_pipe),
+                    ("gb", gb_pipe), ("xgb", xgb_pipe)],
         voting='soft'
     )
 
