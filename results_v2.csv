@@ -1,0 +1,4 @@
+exp_id,timestamp,description,auc_roc,delta,runtime_sec,status
+2,2026-05-03 18:07:29,baseline: LogisticRegression 37 expanded features,0.821531,baseline,0.7,baseline
+3,2026-05-03 19:56:59,Phase_A: 5-fold CV on baseline LR 38 features stability check,0.821566,baseline,5.9,baseline
+4,2026-05-03 20:02:12,Phase_A: 5-fold CV on LR-poly interaction_only degree=2 stability comparison,0.828085,+0.006554,272.6,keep
