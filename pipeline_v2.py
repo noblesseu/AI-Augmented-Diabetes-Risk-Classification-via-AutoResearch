@@ -36,6 +36,7 @@ def _build_ensemble():
         ("interactions", FunctionTransformer(add_interactions)),
         ("classifier", LGBMClassifier(
             n_estimators=300, learning_rate=0.05, num_leaves=63,
+            subsample=0.8, colsample_bytree=0.8,
             random_state=42, verbosity=-1
         ))
     ])
