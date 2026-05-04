@@ -10,6 +10,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import FunctionTransformer
 from sklearn.ensemble import VotingClassifier, HistGradientBoostingClassifier
 from sklearn.feature_selection import VarianceThreshold
+from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import roc_auc_score
 from lightgbm import LGBMClassifier
 from xgboost import XGBClassifier
@@ -62,9 +63,18 @@ def _build_ensemble():
             auto_class_weights='Balanced', random_seed=42, verbose=0
         ))
     ])
+    mlp_pipe = Pipeline([
+        ("interactions", FunctionTransformer(add_interactions)),
+        ("scaler", StandardScaler()),
+        ("classifier", MLPClassifier(
+            hidden_layer_sizes=(128, 64, 32), activation='relu',
+            max_iter=500, early_stopping=True, random_state=42
+        ))
+    ])
     return VotingClassifier(
         estimators=[("lr", lr_pipe), ("lgbm", lgbm_pipe),
-                    ("gb", gb_pipe), ("xgb", xgb_pipe), ("cb", cb_pipe)],
+                    ("gb", gb_pipe), ("xgb", xgb_pipe),
+                    ("cb", cb_pipe), ("mlp", mlp_pipe)],
         voting='soft'
     )
 
