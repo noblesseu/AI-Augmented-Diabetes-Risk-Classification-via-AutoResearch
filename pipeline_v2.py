@@ -15,11 +15,12 @@ from lightgbm import LGBMClassifier
 from xgboost import XGBClassifier
 from catboost import CatBoostClassifier
 
-# v2 feature indices: 8=BPHIGH4, 11=TOLDHI2, 32=_BMI5, 37=_AGEG5YR
+# v2 feature indices: 0=GENHLTH, 8=BPHIGH4, 11=TOLDHI2, 32=_BMI5, 37=_AGEG5YR
 def add_interactions(X):
     bmi_x_age = (X[:, 32] * X[:, 37]).reshape(-1, 1)
     highbp_x_highchol = (X[:, 8] * X[:, 11]).reshape(-1, 1)
-    return np.hstack([X, bmi_x_age, highbp_x_highchol])
+    genhlth_x_age = (X[:, 0] * X[:, 37]).reshape(-1, 1)
+    return np.hstack([X, bmi_x_age, highbp_x_highchol, genhlth_x_age])
 
 
 def _build_ensemble():
