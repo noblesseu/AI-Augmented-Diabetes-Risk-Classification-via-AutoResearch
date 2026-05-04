@@ -8,7 +8,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler, PolynomialFeatures
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import FunctionTransformer
-from sklearn.ensemble import VotingClassifier
+from sklearn.ensemble import VotingClassifier, GradientBoostingClassifier
 from sklearn.metrics import roc_auc_score
 from lightgbm import LGBMClassifier
 
@@ -35,8 +35,14 @@ def _build_ensemble():
             random_state=42, verbosity=-1
         ))
     ])
+    gb_pipe = Pipeline([
+        ("interactions", FunctionTransformer(add_interactions)),
+        ("classifier", GradientBoostingClassifier(
+            n_estimators=100, random_state=42
+        ))
+    ])
     return VotingClassifier(
-        estimators=[("lr", lr_pipe), ("lgbm", lgbm_pipe)],
+        estimators=[("lr", lr_pipe), ("lgbm", lgbm_pipe), ("gb", gb_pipe)],
         voting='soft'
     )
 
