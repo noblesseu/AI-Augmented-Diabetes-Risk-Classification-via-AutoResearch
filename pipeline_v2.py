@@ -7,11 +7,20 @@ import numpy as np
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler, PolynomialFeatures
 from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import FunctionTransformer
 from sklearn.metrics import roc_auc_score
+
+# v2 feature indices (38 features from expanded BRFSS):
+# 8=BPHIGH4, 11=TOLDHI2, 32=_BMI5, 37=_AGEG5YR
+def add_interactions(X):
+    bmi_x_age = (X[:, 32] * X[:, 37]).reshape(-1, 1)
+    highbp_x_highchol = (X[:, 8] * X[:, 11]).reshape(-1, 1)
+    return np.hstack([X, bmi_x_age, highbp_x_highchol])
 
 
 def _build_model():
     return Pipeline([
+        ("interactions", FunctionTransformer(add_interactions)),
         ("scaler", StandardScaler()),
         ("poly", PolynomialFeatures(degree=2, interaction_only=True, include_bias=False)),
         ("classifier", LogisticRegression(
