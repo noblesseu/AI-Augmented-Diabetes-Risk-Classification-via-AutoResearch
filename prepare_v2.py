@@ -89,6 +89,28 @@ FEATURES = [
     "_SMOKER3",   # Smoking status (1=Every day ... 4=Never)
     "_RFDRHV5",   # Heavy drinker (1=No, 2=Yes)
     "_AGEG5YR",   # Age group (1=18-24 ... 13=80+)
+
+    # ── Extended features (v3 additions) ─────────────────────────
+    "_FRUTSUM",   # Fruit consumption: total daily servings x100 (CDC computed)
+    "_VEGESUM",   # Vegetable consumption: total daily servings x100 (CDC computed)
+    "ALCDAY5",    # Days drank alcohol past 30 days (101-199=weekly, 201-299=monthly, 888=none)
+    "AVEDRNK2",   # Average drinks per drinking occasion
+    "PA1MIN_",    # Total physical activity minutes per week (CDC computed)
+    "_PACAT1",    # Physical activity category (1=Highly active ... 4=Inactive)
+    "WTKG3",      # Weight in kg x100 (CDC computed)
+    "CIMEMLOS",   # Confusion/memory loss past 12 months (1=Yes, 2=No)
+    "CHCSCNCR",   # Ever told have skin cancer (1=Yes, 2=No)
+    "CHCOCNCR",   # Ever told have other cancer (1=Yes, 2=No)
+    "_PA150R2",   # Met aerobic PA guideline (1=No, 2=Yes)
+
+    # ── Extended features (v4 additions) ─────────────────────────
+    "SLEPTIM1",   # Hours of sleep per 24-hour period (U-shaped T2D risk: <6 and >9 hrs both elevated)
+    "DIFFWALK",   # Difficulty walking or climbing stairs (1=Yes, 2=No)
+    "DECIDE",     # Difficulty concentrating/remembering/making decisions (1=Yes, 2=No)
+    "DIFFALON",   # Difficulty doing errands alone due to health (1=Yes, 2=No)
+    "_DRNKWEK",   # CDC-computed total drinks per week (continuous float)
+    "_RFBING5",   # Binge drinker: 5+ drinks men / 4+ women on one occasion (1=No, 2=Yes)
+    "FLUSHOT6",   # Flu shot in past 12 months (1=Yes, 2=No) — healthcare engagement proxy
 ]
 
 TARGET_COL = "DIABETE3"
@@ -144,6 +166,24 @@ def load_and_prepare():
 
     X = df[available].copy()
 
+    # ALCDAY5: special frequency encoding before generic cleaning
+    # 101-199 = days per week (subtract 100), 201-299 = days per month (subtract 200)
+    # 888 = no drinks → 0; anything else → NaN
+    if 'ALCDAY5' in X.columns:
+        alc = X['ALCDAY5'].copy()
+        weekly   = (alc >= 101) & (alc <= 199)
+        monthly  = (alc >= 201) & (alc <= 299)
+        none     = (alc == 888)
+        alc_out  = alc.copy() * np.nan
+        alc_out[weekly]  = ((alc[weekly] - 100) * 4.3).round(1)   # days/week → days/month
+        alc_out[monthly] = alc[monthly] - 200
+        alc_out[none]    = 0.0
+        X['ALCDAY5'] = alc_out
+
+    # Large missing-value codes used by CDC computed vars
+    for col in X.columns:
+        X[col] = X[col].replace([99900, 999900], np.nan)
+
     # Clean BRFSS coding
     # Don't know / refused → NaN, then fill with median
     for col in X.columns:
@@ -154,6 +194,11 @@ def load_and_prepare():
     # Fix BMI — stored as BMI*100 in raw BRFSS
     if '_BMI5' in X.columns:
         X['_BMI5'] = X['_BMI5'] / 100.0
+
+    # Fix fruit/veg/weight — stored as value*100 in CDC computed vars
+    for col in ['_FRUTSUM', '_VEGESUM', 'WTKG3']:
+        if col in X.columns:
+            X[col] = X[col] / 100.0
 
     return X.values.astype(np.float32), y, available
 

@@ -22,3 +22,33 @@ exp_id,timestamp,description,auc_roc,delta,runtime_sec,status
 22,2026-05-03 21:19:18,"Phase_E: MLP(128,64,32) relu early_stopping as 6th ensemble member",0.834710,+0.000047,187.1,keep
 23,2026-05-03 21:23:33,"Phase_E: MLP(256,128) alpha=0.001 larger architecture with regularization",0.834753,+0.000043,214.5,keep
 24,2026-05-03 21:29:44,"Phase_E: MLP(256,128) tanh activation instead of relu different nonlinearity",0.834686,-0.000067,215.5,revert
+25,2026-05-04 18:54:51,Phase_E+: Optuna 15-trial independent tuning LGBM+XGB+CatBoost on X_train subsplit,0.834609,-0.000144,441.8,revert
+26,2026-05-05 17:08:09,"Phase_F: 49-feature baseline +11 new BRFSS vars (diet, activity, weight, cognitive, cancer)",0.838295,+0.003542,438.9,keep
+27,2026-05-05 17:24:01,Phase_F: add PA1MIN_*BMI interaction (physical activity x BMI 4th manual feature),0.838296,+0.000001,489.8,keep
+28,2026-05-05 17:35:25,Phase_F: add CIMEMLOS*Age interaction (cognitive decline x age 5th manual feature),0.838349,+0.000053,647.9,keep
+29,2026-05-05 17:58:49,Phase_F: add _PACAT1*BMI interaction (activity category x BMI 6th manual feature),0.838191,-0.000158,499.5,revert
+30,2026-05-05 18:15:08,Phase_F: add ALCDAY5*BMI interaction (alcohol frequency x BMI metabolic risk),0.838297,-0.000052,492.6,revert
+31,2026-05-05 20:16:35,Phase_F: add WTKG3*Age interaction (raw weight x age vs BMI*age complementary),0.838187,-0.000162,471.9,revert
+32,2026-05-06 16:34:14,Phase_G: LGBM n=500 lr=0.03 more trees on 49-feature dataset,0.838307,-0.000042,745.7,revert
+33,2026-05-06 16:44:37,Phase_G: HistGBM max_iter=600 lr=0.03 more iterations on 49-feature dataset,0.838349,-0.000000,541.3,revert
+34,2026-05-06 17:19:18,Phase_G: CatBoost iter=400 lr=0.05 stronger training on 49-feature dataset,0.838396,+0.000047,2043.8,keep
+35,2026-05-06 17:30:07,Phase_G: XGB n=500 lr=0.03 more trees on 49-feature dataset,0.838392,-0.000004,564.2,revert
+36,2026-05-06 17:38:28,Phase_G: LR C=0.2 looser regularization with 49-feature poly expansion,0.838394,-0.000002,442.5,revert
+37,2026-05-06 17:50:24,"Phase_G: MLP(512,256) larger architecture with 49-feature dataset",0.838340,-0.000056,669.3,revert
+38,2026-05-07 15:28:24,Phase_H: 2nd LGBM seed=0 num_leaves=95 subsample=0.7 as 7th ensemble member,0.838519,+0.000123,522.9,keep
+39,2026-05-07 15:49:13,Phase_H: 2nd XGB seed=0 max_depth=5 subsample=0.7 as 8th ensemble member,0.838581,+0.000062,509.4,keep
+40,2026-05-07 18:43:04,Phase_H: 2nd HistGBM seed=0 max_iter=300 lr=0.05 as 9th ensemble member,0.838623,+0.000042,535.2,keep
+41,2026-05-07 19:07:07,Phase_H: 2nd CatBoost seed=0 depth=8 as 10th ensemble member,0.838723,+0.000100,1015.5,keep
+42,2026-05-07 19:31:10,"Phase_H: MLP(256,128,64) seed=0 3-layer as 11th ensemble member",0.838708,-0.000015,1103.9,revert
+43,2026-05-08 14:00:13,Phase_H: 3rd LGBM seed=7 num_leaves=31 regularized as 11th ensemble member,0.838734,+0.000011,612.8,keep
+44,2026-05-08 14:39:11,Phase_H: 3rd HistGBM seed=7 lr=0.04 as 12th ensemble member,0.838694,-0.000040,565.2,revert
+45,2026-05-08 14:51:27,Phase_H: 3rd XGB seed=7 max_depth=8 deep trees as 12th ensemble member,0.838806,+0.000072,588.4,keep
+46,2026-05-08 16:23:23,Phase_H: 3rd CatBoost seed=7 depth=7 lr=0.07 as 13th ensemble member,0.838868,+0.000062,605.7,keep
+47,2026-05-08 16:38:04,Phase_H: 4th LGBM seed=13 num_leaves=63 pure seed diversity as 14th ensemble member,0.838880,+0.000012,752.4,keep
+48,2026-05-08 17:00:06,Phase_H: 4th XGB seed=13 max_depth=6 as 15th ensemble member,0.838896,+0.000016,763.3,keep
+49,2026-05-08 17:25:40,"Phase_I: 55-feature baseline +6 new vars (disability, drinking detail, flu shot)",0.839594,+0.000698,1012.2,keep
+50,2026-05-09 12:59:47,Phase_I: add DIFFWALK*Age interaction (mobility limitation x age),0.839546,-0.000048,70115.8,revert
+51,2026-05-09 13:17:08,Phase_I: add DECIDE*Age interaction (cognitive difficulty x age),0.839611,+0.000017,997.8,keep
+52,2026-05-09 18:54:41,Phase_I: add _DRNKWEK*BMI interaction (weekly alcohol x BMI metabolic load),0.839510,-0.000101,1326.9,revert
+53,2026-05-09 22:01:41,Phase_I: add DIFFALON*BMI interaction (errand difficulty x BMI functional burden),0.839566,-0.000045,1057.9,revert
+54,2026-05-09 22:39:18,Phase_I: add _RFBING5*BMI interaction (binge drinking x BMI episodic risk),0.839652,+0.000041,1772.0,keep
