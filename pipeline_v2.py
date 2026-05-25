@@ -16,7 +16,11 @@ from lightgbm import LGBMClassifier
 from xgboost import XGBClassifier
 from catboost import CatBoostClassifier
 
-# v2 feature indices: 0=GENHLTH, 8=BPHIGH4, 11=TOLDHI2, 32=_BMI5, 37=_AGEG5YR, 42=PA1MIN_, 45=CIMEMLOS, 50=DECIDE, 53=_RFBING5
+# v2 feature indices: 0=GENHLTH, 8=BPHIGH4, 11=TOLDHI2, 32=_BMI5, 37=_AGEG5YR, 42=PA1MIN_, 45=CIMEMLOS, 50=DECIDE, 53=_RFBING5, 54=FLUSHOT6
+# v5 additions (indices 55-58): 55=HIVTST6, 56=CHILDREN, 57=NUMADULT, 58=LMTJOIN3
+# v6 additions (indices 59-62): 59=SMOKDAY2, 60=PNEUVAC3, 61=_PASTRNG, 62=DRNK3GE5
+# v7 additions (indices 63-65): 63=DIFFDRES, 64=STRENGTH, 65=BLIND
+# Note: binary vars recoded from 1=Yes/2=No to 1=Yes/0=No as of v5 dataset
 def add_interactions(X):
     bmi_x_age = (X[:, 32] * X[:, 37]).reshape(-1, 1)
     highbp_x_highchol = (X[:, 8] * X[:, 11]).reshape(-1, 1)
@@ -25,7 +29,9 @@ def add_interactions(X):
     cimemlos_x_age = (X[:, 45] * X[:, 37]).reshape(-1, 1)
     decide_x_age = (X[:, 50] * X[:, 37]).reshape(-1, 1)
     rfbing_x_bmi = (X[:, 53] * X[:, 32]).reshape(-1, 1)
-    return np.hstack([X, bmi_x_age, highbp_x_highchol, genhlth_x_age, pa_x_bmi, cimemlos_x_age, decide_x_age, rfbing_x_bmi])
+    flushot_x_age = (X[:, 54] * X[:, 37]).reshape(-1, 1)
+    pastrng_x_bmi = (X[:, 61] * X[:, 32]).reshape(-1, 1)
+    return np.hstack([X, bmi_x_age, highbp_x_highchol, genhlth_x_age, pa_x_bmi, cimemlos_x_age, decide_x_age, rfbing_x_bmi, flushot_x_age, pastrng_x_bmi])
 
 
 def _build_ensemble():
@@ -75,91 +81,10 @@ def _build_ensemble():
             alpha=0.001, max_iter=500, early_stopping=True, random_state=42
         ))
     ])
-    lgbm2_pipe = Pipeline([
-        ("interactions", FunctionTransformer(add_interactions)),
-        ("classifier", LGBMClassifier(
-            n_estimators=300, learning_rate=0.05, num_leaves=95,
-            subsample=0.7, colsample_bytree=0.7,
-            random_state=0, verbosity=-1
-        ))
-    ])
-    xgb2_pipe = Pipeline([
-        ("interactions", FunctionTransformer(add_interactions)),
-        ("classifier", XGBClassifier(
-            n_estimators=300, learning_rate=0.05, max_depth=5,
-            subsample=0.7, colsample_bytree=0.7,
-            random_state=0, eval_metric='logloss', verbosity=0
-        ))
-    ])
-    gb2_pipe = Pipeline([
-        ("interactions", FunctionTransformer(add_interactions)),
-        ("classifier", HistGradientBoostingClassifier(
-            max_iter=300, learning_rate=0.05, random_state=0
-        ))
-    ])
-    cb2_pipe = Pipeline([
-        ("interactions", FunctionTransformer(add_interactions)),
-        ("classifier", CatBoostClassifier(
-            iterations=400, learning_rate=0.05, depth=8,
-            auto_class_weights='Balanced', random_seed=0, verbose=0
-        ))
-    ])
-    lgbm3_pipe = Pipeline([
-        ("interactions", FunctionTransformer(add_interactions)),
-        ("classifier", LGBMClassifier(
-            n_estimators=300, learning_rate=0.05, num_leaves=31,
-            subsample=0.8, colsample_bytree=0.8,
-            random_state=7, verbosity=-1
-        ))
-    ])
-    xgb3_pipe = Pipeline([
-        ("interactions", FunctionTransformer(add_interactions)),
-        ("classifier", XGBClassifier(
-            n_estimators=300, learning_rate=0.05, max_depth=8,
-            subsample=0.8, colsample_bytree=0.8,
-            random_state=7, eval_metric='logloss', verbosity=0
-        ))
-    ])
-    cb3_pipe = Pipeline([
-        ("interactions", FunctionTransformer(add_interactions)),
-        ("classifier", CatBoostClassifier(
-            iterations=300, learning_rate=0.07, depth=7,
-            auto_class_weights='Balanced', random_seed=7, verbose=0
-        ))
-    ])
-    lgbm4_pipe = Pipeline([
-        ("interactions", FunctionTransformer(add_interactions)),
-        ("classifier", LGBMClassifier(
-            n_estimators=300, learning_rate=0.05, num_leaves=63,
-            subsample=0.8, colsample_bytree=0.8,
-            random_state=13, verbosity=-1
-        ))
-    ])
-    xgb4_pipe = Pipeline([
-        ("interactions", FunctionTransformer(add_interactions)),
-        ("classifier", XGBClassifier(
-            n_estimators=300, learning_rate=0.05, max_depth=6,
-            subsample=0.8, colsample_bytree=0.8,
-            random_state=13, eval_metric='logloss', verbosity=0
-        ))
-    ])
-    lgbm5_pipe = Pipeline([
-        ("interactions", FunctionTransformer(add_interactions)),
-        ("classifier", LGBMClassifier(
-            n_estimators=300, learning_rate=0.05, num_leaves=63,
-            subsample=0.8, colsample_bytree=0.8,
-            random_state=21, verbosity=-1
-        ))
-    ])
     return VotingClassifier(
         estimators=[("lr", lr_pipe), ("lgbm", lgbm_pipe),
                     ("gb", gb_pipe), ("xgb", xgb_pipe),
-                    ("cb", cb_pipe), ("mlp", mlp_pipe),
-                    ("lgbm2", lgbm2_pipe), ("xgb2", xgb2_pipe),
-                    ("gb2", gb2_pipe), ("cb2", cb2_pipe),
-                    ("lgbm3", lgbm3_pipe), ("xgb3", xgb3_pipe),
-                    ("cb3", cb3_pipe), ("lgbm4", lgbm4_pipe),
-                    ("xgb4", xgb4_pipe), ("lgbm5", lgbm5_pipe)],
+                    ("cb", cb_pipe), ("mlp", mlp_pipe)],
         voting='soft'
     )
 
