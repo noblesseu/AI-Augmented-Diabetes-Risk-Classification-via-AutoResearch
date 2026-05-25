@@ -52,3 +52,13 @@ exp_id,timestamp,description,auc_roc,delta,runtime_sec,status
 52,2026-05-09 18:54:41,Phase_I: add _DRNKWEK*BMI interaction (weekly alcohol x BMI metabolic load),0.839510,-0.000101,1326.9,revert
 53,2026-05-09 22:01:41,Phase_I: add DIFFALON*BMI interaction (errand difficulty x BMI functional burden),0.839566,-0.000045,1057.9,revert
 54,2026-05-09 22:39:18,Phase_I: add _RFBING5*BMI interaction (binge drinking x BMI episodic risk),0.839652,+0.000041,1772.0,keep
+55,2026-05-12 13:25:48,Phase_J: LGBM5 seed=21 num_leaves=63 as 16th ensemble member,0.839635,-0.000017,2172.2,revert
+56,2026-05-13 23:37:18,"Phase_J: binary encoding fix + 4 new vars (HIVTST6,CHILDREN,NUMADULT,LMTJOIN3) 59-feature baseline",0.839982,+0.000330,1245.5,keep
+57,2026-05-14 00:21:41,Phase_J: add LMTJOIN3*Age interaction (joint limitation x age 9th manual feature),0.839797,-0.000185,2449.7,revert
+58,2026-05-14 01:34:48,Phase_J: add HIVTST6*Age interaction (HIV-tested x age healthcare engagement proxy),0.839804,-0.000178,3917.3,revert
+59,2026-05-14 11:13:31,Phase_J: CatBoost5 seed=21 depth=6 as 16th ensemble member,0.839965,-0.000017,2815.7,revert
+60,2026-05-14 13:01:34,Phase_J: HistGBM3 seed=21 max_iter=400 lr=0.03 as 16th ensemble member,0.839973,-0.000009,1712.9,revert
+61,2026-05-14 13:53:53,Phase_J: add CHILDREN*BMI interaction (household child burden x metabolic risk),0.839868,-0.000114,2334.7,revert
+62,2026-05-14 17:37:21,"Phase_K: 63-feature baseline +4 new vars (SMOKDAY2,PNEUVAC3,_PASTRNG,DRNK3GE5)",0.843581,+0.003599,10620.9,keep
+63,2026-05-14 23:17:17,Phase_K: add _PASTRNG*BMI interaction (strength training met x BMI),0.843647,+0.000066,19595.0,keep
+64,2026-05-25 08:36:58,CONFIRMATION: final model 66 features 9 interactions 6-member ensemble,0.843316,-0.000331,28609.8,revert

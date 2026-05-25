@@ -111,6 +111,25 @@ FEATURES = [
     "_DRNKWEK",   # CDC-computed total drinks per week (continuous float)
     "_RFBING5",   # Binge drinker: 5+ drinks men / 4+ women on one occasion (1=No, 2=Yes)
     "FLUSHOT6",   # Flu shot in past 12 months (1=Yes, 2=No) — healthcare engagement proxy
+
+    # ── Extended features (v5 additions) ─────────────────────────
+    "HIVTST6",    # Ever tested for HIV (1=Yes, 2=No) — healthcare engagement proxy (90% coverage)
+    "CHILDREN",   # Number of children in household (01-87=count, 88=none; 100% coverage)
+    "NUMADULT",   # Number of adults in household (01-76=count; 58% coverage)
+    "LMTJOIN3",   # Limited activities due to joint symptoms (1=Yes, 2=No; 31% coverage)
+
+    # ── Extended features (v6 additions) ─────────────────────────
+    "SMOKDAY2",   # Current smoking frequency (1=Every day, 2=Some days, 3=Not at all) — granular smoking
+    "PNEUVAC3",   # Ever had pneumococcal vaccine (1=Yes, 2=No) — healthcare engagement proxy
+    "_PASTRNG",   # Met muscle-strengthening guidelines (1=No, 2=Yes; CDC computed)
+    "DRNK3GE5",   # Days had 5+ drinks on one occasion in past 30 days (88=none→0)
+
+    # ── Extended features (v7 additions / Phase_L) ───────────────
+    "LASTDEN4",   # Time since last dental visit (1=<1yr … 5=Never) — oral-metabolic link
+    "RMVTETH4",   # Permanent teeth removed due to decay (1=None, 2=1-5, 3=6+) — chronic disease marker
+    "DIFFDRES",   # Difficulty dressing or bathing (1=Yes, 2=No) — severe functional limitation
+    "STRENGTH",   # Days of muscle-strengthening activities in past week (0-7) — continuous complement to _PASTRNG
+    "BLIND",      # Blind or serious difficulty seeing (1=Yes, 2=No) — diabetic retinopathy marker
 ]
 
 TARGET_COL = "DIABETE3"
@@ -190,6 +209,29 @@ def load_and_prepare():
         X[col] = X[col].replace([7, 9, 77, 99, 7777, 9999], np.nan)
         X[col] = X[col].replace([8, 88], 0)
         X[col] = X[col].fillna(X[col].median())
+
+    # Binary recoding: 1=Yes/2=No → 1=Yes/0=No (fixes sign of LR-poly interaction terms)
+    binary_1yes_2no = [
+        'HLTHPLN1', 'MEDCOST', 'BPMEDS', 'BLOODCHO', 'TOLDHI2',
+        'CVDINFR4', 'CVDCRHD4', 'CVDSTRK3', 'CHCKIDNY', 'HAVARTH3',
+        'ADDEPEV2', 'CHCCOPD1', 'ASTHMA3', 'EXERANY2', 'SMOKE100',
+        'INTERNET', 'VETERAN3', 'QLACTLM2', 'USEEQUIP', 'CIMEMLOS',
+        'CHCSCNCR', 'CHCOCNCR', 'DIFFWALK', 'DECIDE', 'DIFFALON',
+        'FLUSHOT6', 'HIVTST6', 'LMTJOIN3', 'PNEUVAC3', 'DIFFDRES', 'BLIND', 'SEX',
+    ]
+    for col in binary_1yes_2no:
+        if col in X.columns:
+            X[col] = X[col].replace(2, 0)
+
+    # BPHIGH4: 1=Yes, 2=pregnancy-only, 3=No, 4=borderline → binary 1=elevated/0=normal
+    if 'BPHIGH4' in X.columns:
+        X['BPHIGH4'] = X['BPHIGH4'].replace({2: 1, 3: 0, 4: 1})
+
+    # CDC computed vars: 1=No, 2=Yes → 0=No, 1=Yes
+    binary_cdc_1no_2yes = ['_RFHYPE5', '_RFCHOL', '_RFDRHV5', '_RFBING5', '_PA150R2', '_PASTRNG']
+    for col in binary_cdc_1no_2yes:
+        if col in X.columns:
+            X[col] = X[col] - 1
 
     # Fix BMI — stored as BMI*100 in raw BRFSS
     if '_BMI5' in X.columns:
