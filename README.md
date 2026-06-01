@@ -20,10 +20,12 @@ An AI coding agent iteratively modifies a classification pipeline to maximize AU
 | **Target** | Binary — diabetes/pre-diabetes (1) vs. healthy (0) |
 | **Metric** | AUC-ROC on locked test set |
 | **Baseline AUC-ROC** | 0.8201 |
-| **Best AUC-ROC** | 0.8296 (exp 65) |
-| **Improvement** | +0.0095 over baseline |
-| **Total Experiments** | 54 |
-| **Experiment log** | [results.csv](results.csv) |
+| **Final AUC-ROC** | 0.8433 |
+| **Improvement** | +0.0232 over baseline |
+| **Features** | 66 clinically selected + 9 interactions = 75 inputs |
+| **Total Experiments** | 130 (77 v1 + 53 v2) |
+| **Model** | 6-member soft VotingClassifier |
+| **Experiment log** | [results_v2.csv](results_v2.csv) |
 | **Status** | Complete |
 
 ---
